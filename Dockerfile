@@ -1,10 +1,13 @@
 FROM gradle:8.5-jdk21 AS build
 WORKDIR /app
 COPY . .
-RUN gradle shadowJar -x test
+# Просто компилируем код (без сборки JAR)
+RUN gradle compileJava
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/fertdlc-1.0.0-all.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Копируем скомпилированные классы и зависимости
+COPY --from=build /app/build/classes/java/main /app/classes
+COPY --from=build /app/build/resources/main /app/resources
+# Запускаем через classpath (без JAR)
+ENTRYPOINT ["java", "-cp", "/app/classes:/app/resources", "fertdlc.keys.KeyServer"]
