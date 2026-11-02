@@ -4,6 +4,9 @@ WORKDIR /app
 # Копируем ВСЁ, что есть в репозитории
 COPY . .
 
+# ПРИНУДИТЕЛЬНО создаем папку для классов, чтобы Docker не ругался
+RUN mkdir -p /app/classes
+
 # Ищем файл KeyServer.java во всех папках и компилируем его
 RUN find . -name "KeyServer.java" -exec javac -d /app/classes {} +
 
