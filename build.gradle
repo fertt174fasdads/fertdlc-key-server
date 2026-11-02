@@ -1,5 +1,6 @@
 plugins {
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'fertdlc'
@@ -12,20 +13,20 @@ java {
 }
 
 repositories {
-    mavenCentral() // Обязательно добавь это!
+    mavenCentral()
 }
 
 dependencies {
-    // Вставь сюда нужные библиотеки. Например:
-    // implementation 'org.json:json:20231013'
-    // implementation 'com.sparkjava:spark-core:2.9.4'
+    // Тут пусто, так как используются только стандартные библиотеки Java
 }
 
 application {
     mainClass = 'fertdlc.keys.KeyServer'
 }
 
-tasks.named('jar') {
+// Эта задача нужна, чтобы shadowJar правильно собирался
+shadowJar {
+    mergeServiceFiles()
     manifest {
         attributes 'Main-Class': application.mainClass.get()
     }
