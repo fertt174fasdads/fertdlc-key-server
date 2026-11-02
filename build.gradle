@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+group = 'fertdlc'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'fertdlc.keys.KeyServer'
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
