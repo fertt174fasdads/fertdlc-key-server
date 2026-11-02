@@ -1,7 +1,5 @@
 plugins {
     id 'application'
-    // Добавляем плагин Shadow для сборки толстого JAR
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'fertdlc'
@@ -21,9 +19,15 @@ application {
     mainClass = 'fertdlc.keys.KeyServer'
 }
 
-shadowJar {
-    mergeServiceFiles()
+// Создаем "толстый" JAR с явным именем файла
+tasks.register('fatJar', Jar) {
+    archiveBaseName = 'fertdlc'
+    archiveVersion = '1.0.0'
+    archiveClassifier = 'all' // Это даст имя fertdlc-1.0.0-all.jar
     manifest {
         attributes 'Main-Class': application.mainClass.get()
     }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
