@@ -1,15 +1,12 @@
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM gradle:8.5-jdk21 AS build
 WORKDIR /app
-# Копируем весь проект
 COPY . .
-# Заходим в папку с исходниками
-WORKDIR /app/src/main/java
-# Компилируем файл KeyServer.java в папку /app/classes
-RUN javac -d /app/classes fertdlc/keys/KeyServer.java
+# Компилируем проект
+RUN gradle compileJava
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 # Копируем скомпилированные классы
-COPY --from=build /app/classes /app/classes
-# Запускаем
+COPY --from=build /app/build/classes/java/main /app/classes
+# Запускаем сервер, указывая путь к классам
 ENTRYPOINT ["java", "-cp", "/app/classes", "fertdlc.keys.KeyServer"]
